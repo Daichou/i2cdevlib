@@ -32,27 +32,23 @@ THE SOFTWARE.
 #ifndef _HELPER_3DMATH_H_
 #define _HELPER_3DMATH_H_
 
-class Quaternion {
-    public:
-        float w;
-        float x;
-        float y;
-        float z;
-        
+struct Quaternion {
+    float w;
+    float x;
+    float y;
+    float z;
         Quaternion() {
             w = 1.0f;
             x = 0.0f;
             y = 0.0f;
             z = 0.0f;
         }
-        
         Quaternion(float nw, float nx, float ny, float nz) {
             w = nw;
             x = nx;
             y = ny;
             z = nz;
         }
-
         Quaternion getProduct(Quaternion q) {
             // Quaternion multiplication is defined by:
             //     (Q1 * Q2).w = (w1w2 - x1x2 - y1y2 - z1z2)
