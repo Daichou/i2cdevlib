@@ -168,61 +168,58 @@ VectorInt16 VectorInt16_getRotated(VectorInt16* A,Quaternion *q) {
 }
 
 
-class VectorFloat {
-    public:
-        float x;
-        float y;
-        float z;
 
-        VectorFloat() {
-            x = 0;
-            y = 0;
-            z = 0;
-        }
-        
-        VectorFloat(float nx, float ny, float nz) {
-            x = nx;
-            y = ny;
-            z = nz;
-        }
+void VectorFloat_Init(VectorFloat* A) {
+    A->x = 0;
+    A->y = 0;
+    A->z = 0;
+}
 
-        float getMagnitude() {
-            return sqrt(x*x + y*y + z*z);
-        }
+void VectorFloat_Construct(VectorInt16* A , float nx, float ny, float nz) {
+    A->x = nx;
+    A->y = ny;
+    A->z = nz;
+}
 
-        void normalize() {
-            float m = getMagnitude();
-            x /= m;
-            y /= m;
-            z /= m;
-        }
-        
-        VectorFloat getNormalized() {
-            VectorFloat r(x, y, z);
-            r.normalize();
-            return r;
-        }
-        
-        void rotate(Quaternion *q) {
-            Quaternion p(0, x, y, z);
+float VectorInt16_getMagnitude(VectorFloat* A) {
+    return sqrt(A->x*A->x + A->y*A->y + A->z*A->z);
+}
 
-            // quaternion multiplication: q * p, stored back in p
-            p = q -> getProduct(p);
+void VectorFloat_normalize(VectorFloat* A) {
+    float m = getMagnitude(A);
+    A->x /= m;
+    A->y /= m;
+    A->z /= m;
+}
 
-            // quaternion multiplication: p * conj(q), stored back in p
-            p = p.getProduct(q -> getConjugate());
+VectorFloat getNormalized(VectorFloat* A) {
+    VectorFloat r;
+    VectorFloat_Construct(&r, x, y, z);
+    VectorFloat_normalize(&r);
+    return r;
+}
 
-            // p quaternion is now [0, x', y', z']
-            x = p.x;
-            y = p.y;
-            z = p.z;
-        }
+void VectorFloat_rotate(VectorFloat* A , Quaternion *q) {
+    Quaternion p;
+    Quaternion_Construct(&p, 0 , A->x, A->y, A->z);
 
-        VectorFloat getRotated(Quaternion *q) {
-            VectorFloat r(x, y, z);
-            r.rotate(q);
-            return r;
-        }
-};
+    // quaternion multiplication: q * p, stored back in p
+    //p = q -> getProduct(p);
+    p = Quaternion_getProduct(&q,&p);
+    // quaternion multiplication: p * conj(q), stored back in p
+    //p = p.getProduct(q -> getConjugate());
+    p = Quaternion_getProduct(&p,&Quaternion_getConjugate(&q));
+    // p quaternion is now [0, x', y', z']
+    A->x = p.x;
+    A->y = p.y;
+    A->z = p.z;
+}
+
+VectorFloat VectorFloat_getRotated(VectorFloat* A , Quaternion *q) {
+    VectorFloat r;
+    VectorFloat_Construct(&r,A->x, A->y, A->z);
+    VectorFloat_rotate(&r,q);
+    return r;
+}
 
 #endif /* _HELPER_3DMATH_H_ */
