@@ -56,7 +56,7 @@
 #include<ports.h>
 #include<stdint.h>
 #include<libpic30.h>
-#include"../../MPU6050.h"
+//#include"../../MPU6050.h"
 #include"../../../I2Cdev/I2Cdev.h"
 #include"../../MPU6050_6Axis_MotionApps20.h"
 /* Received data is stored in array Buf  */
@@ -166,7 +166,7 @@ void Init()
     ConfigIntI2C(MI2C_INT_OFF & SI2C_INT_OFF);
     OpenI2C(I2C_config1,I2C_config2);
     OpenUART2(U2MODEvalue, U2STAvalue, baudvalue);
-    ConfigINT0(RISING_EDGE_INT & INT_ENABLE & GLOBAL_INT_ENABLE & EXT_INT_PRI_1);
+    ConfigINT0(RISING_EDGE_INT & EXT_INT_ENABLE & GLOBAL_INT_ENABLE & EXT_INT_PRI_1);
 
     MPU6050(MPU6050_ADDRESS_AD0_LOW);
     printf(Buf,"Initialize MPU6050\n\0");
@@ -179,8 +179,8 @@ void Init()
     printf(MPU6050_testConnection() ? "MPU6050 connection successful\r\n" :
         "MPU6050 connection failed\r\n");
 
-    if (!MPU6050_testConnection())
-        continue;
+    //if (!MPU6050_testConnection())
+     //   continue;
 
     printf("Reading offset\n");
     printf("Xaccel= %d\n",MPU6050_getXAccelOffset());

@@ -43,9 +43,9 @@ THE SOFTWARE.
 
 #include "../I2Cdev/I2Cdev.h"
 
-#if ((defined MPU6050_INCLUDE_DMP_MOTIONAPPS20) || (defined MPU6050_INCLUDE_DMP_MOTIONAPPS41))
-    #error DMP is not supported yet
-#endif
+//#if ((defined MPU6050_INCLUDE_DMP_MOTIONAPPS20) || (defined MPU6050_INCLUDE_DMP_MOTIONAPPS41))
+//    #error DMP is not supported yet
+//#endif
 
 #define MPU6050_ADDRESS_AD0_LOW     0x68 // address pin low (GND), default for InvenSense evaluation board
 #define MPU6050_ADDRESS_AD0_HIGH    0x69 // address pin high (VCC)

@@ -31,6 +31,7 @@ THE SOFTWARE.
 
 #ifndef _HELPER_3DMATH_H_
 #define _HELPER_3DMATH_H_
+#include <math.h>
 
 struct quaternion {
     float w;
@@ -59,11 +60,12 @@ void Quaternion_Init( Quaternion* A) {
     A->y = 0.0f;
     A->z = 0.0f;
 }
-void Quaternion_Construct( Quaternion* A ,float nw, float nx, float ny, float nz) {
+Quaternion Quaternion_Construct( Quaternion* A ,float nw, float nx, float ny, float nz) {
     A->w = nw;
     A->x = nx;
     A->y = ny;
     A->z = nz;
+    return *A;
 }
 Quaternion Quaternion_getProduct( Quaternion* A ,Quaternion* B) {
     // Quaternion multiplication is defined by:
@@ -121,7 +123,7 @@ float VectorInt16_getMagnitude(VectorInt16* A) {
 }
 
 void VectorInt16_normalize(VectorInt16* A) {
-    float m = getMagnitude(A);
+    float m = VectorInt16_getMagnitude(A);
     A->x /= m;
     A->y /= m;
     A->z /= m;
@@ -129,7 +131,7 @@ void VectorInt16_normalize(VectorInt16* A) {
 
 VectorInt16 VectorInt16_getNormalized(VectorInt16* A ) {
     VectorInt16 r;
-    VectorInt16_Construct(&r,A->x,A->y,A->z)
+    VectorInt16_Construct(&r,A->x,A->y,A->z);
     VectorInt16_normalize(&r);
     return r;
 }
@@ -149,10 +151,11 @@ void VectorInt16_rotate(VectorInt16* A ,Quaternion *q) {
     Quaternion_Construct(&p , 0 , A->x , A->y , A->z);
 
     // quaternion multiplication: q * p, stored back in p
-    p = Quaternion_getProduct(&q,&p);
+    p = Quaternion_getProduct(q,&p);
 
     // quaternion multiplication: p * conj(q), stored back in p
-    p = Quaternion_getProduct(&p , &Quaternion_getConjugate(&q));
+    Quaternion tmp = Quaternion_getConjugate(q);
+    p = Quaternion_getProduct(&p , &tmp);
 
     // p quaternion is now [0, x', y', z']
     A->x = p.x;
@@ -162,7 +165,7 @@ void VectorInt16_rotate(VectorInt16* A ,Quaternion *q) {
 
 VectorInt16 VectorInt16_getRotated(VectorInt16* A,Quaternion *q) {
     VectorInt16 r;
-    VectorInt16_Construct(&r,x, y, z);
+    VectorInt16_Construct(&r,A->x, A->y, A->z);
     VectorInt16_rotate(&r,q);
     return r;
 }
@@ -175,18 +178,18 @@ void VectorFloat_Init(VectorFloat* A) {
     A->z = 0;
 }
 
-void VectorFloat_Construct(VectorInt16* A , float nx, float ny, float nz) {
+void VectorFloat_Construct(VectorFloat* A , float nx, float ny, float nz) {
     A->x = nx;
     A->y = ny;
     A->z = nz;
 }
 
-float VectorInt16_getMagnitude(VectorFloat* A) {
+float VectorFloat_getMagnitude(VectorFloat* A) {
     return sqrt(A->x*A->x + A->y*A->y + A->z*A->z);
 }
 
 void VectorFloat_normalize(VectorFloat* A) {
-    float m = getMagnitude(A);
+    float m = VectorFloat_getMagnitude(A);
     A->x /= m;
     A->y /= m;
     A->z /= m;
@@ -194,7 +197,7 @@ void VectorFloat_normalize(VectorFloat* A) {
 
 VectorFloat getNormalized(VectorFloat* A) {
     VectorFloat r;
-    VectorFloat_Construct(&r, x, y, z);
+    VectorFloat_Construct(&r, A->x, A->y, A->z);
     VectorFloat_normalize(&r);
     return r;
 }
@@ -205,10 +208,11 @@ void VectorFloat_rotate(VectorFloat* A , Quaternion *q) {
 
     // quaternion multiplication: q * p, stored back in p
     //p = q -> getProduct(p);
-    p = Quaternion_getProduct(&q,&p);
+    p = Quaternion_getProduct(q,&p);
     // quaternion multiplication: p * conj(q), stored back in p
     //p = p.getProduct(q -> getConjugate());
-    p = Quaternion_getProduct(&p,&Quaternion_getConjugate(&q));
+    Quaternion tmp = Quaternion_getConjugate(q);
+    p = Quaternion_getProduct(&p,&tmp);
     // p quaternion is now [0, x', y', z']
     A->x = p.x;
     A->y = p.y;

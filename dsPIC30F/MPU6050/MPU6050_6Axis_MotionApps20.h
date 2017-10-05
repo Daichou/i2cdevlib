@@ -33,7 +33,7 @@ THE SOFTWARE.
 #ifndef _MPU6050_6AXIS_MOTIONAPPS20_H_
 #define _MPU6050_6AXIS_MOTIONAPPS20_H_
 
-#include "I2Cdev.h"
+//#include "I2Cdev.h"
 #include "helper_3dmath.h"
 
 // MotionApps 2.0 DMP implementation, built using the MPU-6050EVB evaluation board
@@ -42,7 +42,7 @@ THE SOFTWARE.
 #include "MPU6050.h"
 #include <xc.h>
 #include <stdint.h>
-
+#include <string.h>
 /* Source is from the InvenSense MotionApps v2 demo code. Original source is
  * unavailable, unless you happen to be amazing as decompiling binary by
  * hand (in which case, please contact me, and I'm totally serious).
@@ -58,6 +58,9 @@ THE SOFTWARE.
 // compiler macro (Arduino IDE 1.0+ required).
 
 //#define DEBUG
+//uint8_t *dmpPacketBuffer;
+//uint16_t dmpPacketSize;
+
 #ifdef DEBUG
     #define DEBUG_PRINT(x) Serial.print(x)
     #define DEBUG_PRINTF(x, y) Serial.print(x, y)
@@ -285,8 +288,8 @@ const unsigned char dmpUpdates[MPU6050_DMP_UPDATES_SIZE] = {
 uint8_t MPU6050_dmpInitialize() {
     // reset device
     //DEBUG_PRINTLN(F("\n\nResetting MPU6050..."));
-    reset();
-    delay(30); // wait after reset
+    MPU6050_reset();
+    //delay(30); // wait after reset
 
     // enable sleep mode and wake cycle
     /*Serial.println(F("Enabling sleep mode..."));
@@ -335,7 +338,7 @@ uint8_t MPU6050_dmpInitialize() {
     MPU6050_setSlaveAddress(0, 0x68);
     //DEBUG_PRINTLN(F("Resetting I2C Master control..."));
     MPU6050_resetI2CMaster();
-    delay(20);
+    //delay(20);
 
     // load DMP code into memory banks
     //DEBUG_PRINT(F("Writing DMP code to MPU memory banks ("));
@@ -570,7 +573,7 @@ uint8_t MPU6050_dmpGetQuaternion16(int16_t *data, const uint8_t* packet) {
 uint8_t MPU6050_dmpGetQuaternion(Quaternion *q, const uint8_t* packet) {
     // TODO: accommodate different arrangements of sent data (ONLY default supported now)
     int16_t qI[4];
-    uint8_t status = MPU6050_dmpGetQuaternion(qI, packet);
+    uint8_t status = MPU6050_dmpGetQuaternion16(qI, packet);
     if (status == 0) {
         q -> w = (float)qI[0] / 16384.0f;
         q -> x = (float)qI[1] / 16384.0f;
@@ -620,7 +623,7 @@ uint8_t MPU6050_dmpGetLinearAccelInWorld(VectorInt16 *v, VectorInt16 *vReal, Qua
     // rotate measured 3D acceleration vector into original state
     // frame of reference based on orientation quaternion
     memcpy(v, vReal, sizeof(VectorInt16));
-    v -> rotate(q);
+    VectorInt16_rotate(v,q);
     return 0;
 }
 // uint8_t MPU6050::dmpGetGyroAndAccelSensor(long *data, const uint8_t* packet);
