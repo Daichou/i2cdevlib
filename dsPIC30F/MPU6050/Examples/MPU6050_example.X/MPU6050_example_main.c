@@ -45,6 +45,7 @@
 #include<i2c.h>
 #include"MPU6050.h"
 #include"I2Cdev.h"
+#include<libpic30.h>
 /* Received data is stored in array Buf  */
 char Buf[80];
 char* Receivedddata = Buf;
@@ -82,6 +83,7 @@ int main(void)
 {
     TRISCbits.TRISC14 = 0;
     LATCbits.LATC14 = 1;
+    __C30_UART=2;
     while(1){
         /* Data to be transmitted using UART communication module */
         TRISFbits.TRISF3 = 0;
@@ -124,119 +126,63 @@ int main(void)
         OpenUART2(U2MODEvalue, U2STAvalue, baudvalue);
 
         MPU6050(MPU6050_ADDRESS_AD0_LOW);
-        sprintf(Buf,"Initialize MPU6050\n\0");
-        /* Load transmit buffer and transmit the same till null character is encountered */
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
+        printf("Initialize MPU6050\n\0");
+        
         MPU6050_initialize();
 
         unsigned char MPU6050_ID = MPU6050_getDeviceID();
 
-        sprintf(Buf,"Testing device connections...\n\0");
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
+        printf("Testing device connections...\n\0");
+        
+        printf("MPU6050_ID = 0x%X\n",MPU6050_ID);
+        
 
-        sprintf(Buf,"MPU6050_ID = 0x%X\n",MPU6050_ID);
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-
-        sprintf(Buf,MPU6050_testConnection() ? "MPU6050 connection successful\r\n" :
+        printf(MPU6050_testConnection() ? "MPU6050 connection successful\r\n" :
             "MPU6050 connection failed\r\n");
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
+        
         if (!MPU6050_testConnection())
             continue;
 
-        sprintf(Buf,"Reading offset\n");
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Xaccel= %d\n",MPU6050_getXAccelOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Yaccel= %d\n",MPU6050_getYAccelOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Zaccel= %d\n",MPU6050_getZAccelOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Xgyro= %d\n",MPU6050_getXGyroOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Ygyro= %d\n",MPU6050_getYGyroOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Zgyro= %d\n",MPU6050_getZGyroOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
+        printf("Reading offset\n");
+        
+        printf("Xaccel= %d\n",MPU6050_getXAccelOffset());
+        
+        printf("Yaccel= %d\n",MPU6050_getYAccelOffset());
+        
+        printf("Zaccel= %d\n",MPU6050_getZAccelOffset());
+        
+        printf("Xgyro= %d\n",MPU6050_getXGyroOffset());
+        
+        printf("Ygyro= %d\n",MPU6050_getYGyroOffset());
+        
+        printf("Zgyro= %d\n",MPU6050_getZGyroOffset());
+        
         MPU6050_setXGyroOffset(220);
         MPU6050_setYGyroOffset(76);
         MPU6050_setZGyroOffset(-85);
 
-        sprintf(Buf,"Reading Updated offset\n");
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Xaccel= %d\n",MPU6050_getXAccelOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Yaccel= %d\n",MPU6050_getYAccelOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Zaccel= %d\n",MPU6050_getZAccelOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Xgyro= %d\n",MPU6050_getXGyroOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Ygyro= %d\n",MPU6050_getYGyroOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
-        sprintf(Buf,"Zgyro= %d\n",MPU6050_getZGyroOffset());
-        putsUART2 ((unsigned int *)Buf);
-        /* Wait for  transmission to complete */
-        while(BusyUART2());
-
+        printf("Reading Updated offset\n");
+        
+        printf("Xaccel= %d\n",MPU6050_getXAccelOffset());
+        
+        printf("Yaccel= %d\n",MPU6050_getYAccelOffset());
+        
+        printf("Zaccel= %d\n",MPU6050_getZAccelOffset());
+        
+        printf("Xgyro= %d\n",MPU6050_getXGyroOffset());
+        
+        printf("Ygyro= %d\n",MPU6050_getYGyroOffset());
+        
+        printf("Zgyro= %d\n",MPU6050_getZGyroOffset());
+        
         MPU6050_setSleepEnabled(false);
         while (true) {
            // Read raw accel/gyro measurements from device
             MPU6050_getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
             // Display tab-separated accel/gyro x/y/z values
-            sprintf(Buf,"a/g:\t%d\t%d\t%d\t%d\t%d\t%d\r\n", ax, ay, az, gx, gy, gz);
-            putsUART2 ((unsigned int *)Buf);
-            /* Wait for  transmission to complete */
-            while(BusyUART2());
+            printf("a/g:\t%d\t%d\t%d\t%d\t%d\t%d\r\n", ax, ay, az, gx, gy, gz);
+            
             // Blink LED to indicate activity
             LATCbits.LATC14 ^= 1;
 
