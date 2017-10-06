@@ -41,6 +41,8 @@ THE SOFTWARE.
 #include "MPU6050.h"
 #include <stdlib.h>
 #include <string.h>
+#include "MPU6050_config.h"
+#include <xc.h>
 
 MPU6050_t mpu6050;
 
@@ -3076,11 +3078,11 @@ bool MPU6050_writeDMPConfigurationSet(const uint8_t *data, uint16_t dataSize, bo
             //Serial.println(length);
             if (useProgMem) {
                 if (sizeof(progBuffer) < length) progBuffer = (uint8_t *)realloc(progBuffer, length);
-                for (j = 0; j < length; j++) progBuffer[j] = pgm_read_byte(data + i + j);
+                for (j = 0; j < length; j++) progBuffer[j] = *(data + i + j);       //pgm_read_byte
             } else {
                 progBuffer = (uint8_t *)data + i;
             }
-            success = MPU6050_writeMemoryBlock(progBuffer, length, bank, offset, true);
+            success = MPU6050_writeMemoryBlock(progBuffer, length, bank, offset, true,true);
             i += length;
         } else {
             // special instruction
@@ -3089,7 +3091,7 @@ bool MPU6050_writeDMPConfigurationSet(const uint8_t *data, uint16_t dataSize, bo
             // behavior only, and exactly why (or even whether) it has to be here
             // is anybody's guess for now.
             if (useProgMem) {
-                special = pgm_read_byte(data + i++);
+                special = *(data + i++);            //pgm_read_byte
             } else {
                 special = data[i++];
             }
@@ -3362,7 +3364,7 @@ uint8_t MPU6050_dmpInitialize() {
     // reset device
     //DEBUG_PRINTLN(F("\n\nResetting MPU6050..."));
     MPU6050_reset();
-    //delay(30); // wait after reset
+    __delay_ms(30); // wait after reset
 
     // enable sleep mode and wake cycle
     /*Serial.println(F("Enabling sleep mode..."));
@@ -3411,13 +3413,13 @@ uint8_t MPU6050_dmpInitialize() {
     MPU6050_setSlaveAddress(0, 0x68);
     //DEBUG_PRINTLN(F("Resetting I2C Master control..."));
     MPU6050_resetI2CMaster();
-    //delay(20);
+    __delay_ms(20);
 
     // load DMP code into memory banks
     //DEBUG_PRINT(F("Writing DMP code to MPU memory banks ("));
     //DEBUG_PRINT(MPU6050_DMP_CODE_SIZE);
     //DEBUG_PRINTLN(F(" bytes)"));
-    if (MPU6050_writeProgMemoryBlock(dmpMemory, MPU6050_DMP_CODE_SIZE)) {
+    if (MPU6050_writeProgMemoryBlock(dmpMemory, MPU6050_DMP_CODE_SIZE,0,0,true)) {
         //DEBUG_PRINTLN(F("Success! DMP code written and verified."));
 
         // write DMP configuration
@@ -3530,7 +3532,7 @@ uint8_t MPU6050_dmpInitialize() {
             //DEBUG_PRINTLNF(getIntStatus(), HEX);
 
             //DEBUG_PRINTLN(F("Reading final memory update 6/7 (function unknown)..."));
-            MPU6050_readMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true);
+            MPU6050_readMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1]);
 
             //DEBUG_PRINTLN(F("Waiting for FIFO count > 2..."));
             while ((fifoCount = MPU6050_getFIFOCount()) < 3);
