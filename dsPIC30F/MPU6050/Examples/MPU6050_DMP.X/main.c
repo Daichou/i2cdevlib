@@ -85,12 +85,12 @@ uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\
 
 
 /* This is UART1 transmit ISR */
-void __attribute__((__interrupt__)) _U2TXInterrupt(void)
+void _ISR _U2TXInterrupt(void)
 {  
    IFS1bits.U2TXIF = 0;
 }
 
-void __attribute__((__interrupt__)) _INT0Interrupt(void)
+void _ISR _INT0Interrupt(void)
 {  
    IFS0bits.INT0IF = 0;//clear interrupt
    mpuInterrupt = true;
@@ -174,7 +174,7 @@ void Init()
 
     unsigned char MPU6050_ID = MPU6050_getDeviceID();
 
-    printf("Testing device connections...\n\0");
+    printf("Testing device connections...\n");
     printf("MPU6050_ID = 0x%X\n",MPU6050_ID);
     printf(MPU6050_testConnection() ? "MPU6050 connection successful\r\n" :
         "MPU6050 connection failed\r\n");
