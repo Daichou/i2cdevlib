@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c ../../MPU6050.c ../../../I2Cdev/I2Cdev.c ../../MPU6050_6Axis_MotionApps20.c ../../helper_3dmath.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c ../../MPU6050.c ../../../I2Cdev/I2Cdev.c ../../helper_3dmath.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/_ext/43898991/MPU6050.o ${OBJECTDIR}/_ext/105797386/I2Cdev.o ${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o ${OBJECTDIR}/_ext/43898991/helper_3dmath.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/_ext/43898991/MPU6050.o.d ${OBJECTDIR}/_ext/105797386/I2Cdev.o.d ${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o.d ${OBJECTDIR}/_ext/43898991/helper_3dmath.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/_ext/43898991/MPU6050.o ${OBJECTDIR}/_ext/105797386/I2Cdev.o ${OBJECTDIR}/_ext/43898991/helper_3dmath.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/_ext/43898991/MPU6050.o.d ${OBJECTDIR}/_ext/105797386/I2Cdev.o.d ${OBJECTDIR}/_ext/43898991/helper_3dmath.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/_ext/43898991/MPU6050.o ${OBJECTDIR}/_ext/105797386/I2Cdev.o ${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o ${OBJECTDIR}/_ext/43898991/helper_3dmath.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/_ext/43898991/MPU6050.o ${OBJECTDIR}/_ext/105797386/I2Cdev.o ${OBJECTDIR}/_ext/43898991/helper_3dmath.o
 
 # Source Files
-SOURCEFILES=main.c ../../MPU6050.c ../../../I2Cdev/I2Cdev.c ../../MPU6050_6Axis_MotionApps20.c ../../helper_3dmath.c
+SOURCEFILES=main.c ../../MPU6050.c ../../../I2Cdev/I2Cdev.c ../../helper_3dmath.c
 
 
 CFLAGS=
@@ -115,13 +115,6 @@ ${OBJECTDIR}/_ext/105797386/I2Cdev.o: ../../../I2Cdev/I2Cdev.c  nbproject/Makefi
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../I2Cdev/I2Cdev.c  -o ${OBJECTDIR}/_ext/105797386/I2Cdev.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/105797386/I2Cdev.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1    -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/_ext/105797386/I2Cdev.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o: ../../MPU6050_6Axis_MotionApps20.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/_ext/43898991" 
-	@${RM} ${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o.d 
-	@${RM} ${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../MPU6050_6Axis_MotionApps20.c  -o ${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1    -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 ${OBJECTDIR}/_ext/43898991/helper_3dmath.o: ../../helper_3dmath.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/43898991" 
 	@${RM} ${OBJECTDIR}/_ext/43898991/helper_3dmath.o.d 
@@ -150,13 +143,6 @@ ${OBJECTDIR}/_ext/105797386/I2Cdev.o: ../../../I2Cdev/I2Cdev.c  nbproject/Makefi
 	@${RM} ${OBJECTDIR}/_ext/105797386/I2Cdev.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../I2Cdev/I2Cdev.c  -o ${OBJECTDIR}/_ext/105797386/I2Cdev.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/105797386/I2Cdev.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/_ext/105797386/I2Cdev.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o: ../../MPU6050_6Axis_MotionApps20.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/_ext/43898991" 
-	@${RM} ${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o.d 
-	@${RM} ${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../MPU6050_6Axis_MotionApps20.c  -o ${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/_ext/43898991/MPU6050_6Axis_MotionApps20.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 ${OBJECTDIR}/_ext/43898991/helper_3dmath.o: ../../helper_3dmath.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/43898991" 

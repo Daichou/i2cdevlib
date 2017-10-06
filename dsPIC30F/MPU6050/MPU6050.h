@@ -42,7 +42,7 @@ THE SOFTWARE.
 #define _MPU6050_H_
 
 #include "../I2Cdev/I2Cdev.h"
-
+#include "helper_3dmath.h"
 
 #define MPU6050_ADDRESS_AD0_LOW     0x68 // address pin low (GND), default for InvenSense evaluation board
 #define MPU6050_ADDRESS_AD0_HIGH    0x69 // address pin high (VCC)
@@ -781,4 +781,23 @@ uint8_t MPU6050_getDMPConfig2();
 void MPU6050_setDMPConfig2(uint8_t config);
 
 
+uint8_t MPU6050_dmpInitialize();
+bool MPU6050_dmpPacketAvailable();
+uint8_t MPU6050_dmpGetAccel32(int32_t *data, const uint8_t* packet);
+uint8_t MPU6050_dmpGetAccel16(int16_t *data, const uint8_t* packet);
+uint8_t MPU6050_dmpGetAccel(VectorInt16 *v, const uint8_t* packet);
+uint8_t MPU6050_dmpGetQuaternion32(int32_t *data, const uint8_t* packet);
+uint8_t MPU6050_dmpGetQuaternion16(int16_t *data, const uint8_t* packet);
+uint8_t MPU6050_dmpGetQuaternion(Quaternion *q, const uint8_t* packet);
+uint8_t MPU6050_dmpGetGyro32(int32_t *data, const uint8_t* packet);
+uint8_t MPU6050_dmpGetGyro16(int16_t *data, const uint8_t* packet);
+uint8_t MPU6050_dmpGetGyro(VectorInt16 *v, const uint8_t* packet);
+uint8_t MPU6050_dmpGetLinearAccel(VectorInt16 *v, VectorInt16 *vRaw, VectorFloat *gravity);
+uint8_t MPU6050_dmpGetLinearAccelInWorld(VectorInt16 *v, VectorInt16 *vReal, Quaternion *q);
+uint8_t MPU6050_dmpGetGravity(VectorFloat *v, Quaternion *q);
+uint8_t MPU6050_dmpGetEuler(float *data, Quaternion *q);
+uint8_t MPU6050_dmpGetYawPitchRoll(float *data, Quaternion *q, VectorFloat *gravity);
+uint8_t MPU6050_dmpProcessFIFOPacket(const unsigned char *dmpData);
+uint8_t MPU6050_dmpReadAndProcessFIFOPacket(uint8_t numPackets, uint8_t *processed);
+uint16_t MPU6050_dmpGetFIFOPacketSize();
 #endif /* _MPU6050_H_ */

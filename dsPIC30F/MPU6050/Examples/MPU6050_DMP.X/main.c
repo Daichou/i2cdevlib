@@ -56,9 +56,9 @@
 #include<ports.h>
 #include<stdint.h>
 #include<libpic30.h>
-//#include"../../MPU6050.h"
+#include"../../MPU6050.h"
 #include"../../../I2Cdev/I2Cdev.h"
-#include"../../MPU6050_6Axis_MotionApps20.h"
+//#include"../../MPU6050_6Axis_MotionApps20.h"
 /* Received data is stored in array Buf  */
 char Buf[80];
 char* Receivedddata = Buf;
@@ -196,7 +196,7 @@ void Init()
     if (devStatus == 0) {
         printf("DMP Enabled.....\n");
         MPU6050_setDMPEnabled(true);
-        mpuInitStatus = MPU6050_getInitStatus();
+        mpuInitStatus = MPU6050_getIntStatus();
         
         printf("DMP ready,wait for first interupt\n");
         dmpReady = true;
@@ -235,15 +235,15 @@ int main(void)
         
         }
         mpuInterrupt = false;
-        mpuInitStatus = MPU6050_getInitStatus();
+        mpuInitStatus = MPU6050_getIntStatus();
 
-        fifocount = MPU6050_GetFIFOCount();
+        fifocount = MPU6050_getFIFOCount();
         if ( (mpuInitStatus & 0x10) || (fifocount == 1024) ){
             MPU6050_resetFIFO();
             printf("FIFO overflow!!");
         } else if ( mpuInitStatus && 0x02 )
         {
-            while ( fifocount < packetSize ) fifocount = MPU6050_GetFIFOCount();
+            while ( fifocount < packetSize ) fifocount = MPU6050_getFIFOCount();
 
             MPU6050_getFIFOBytes(fifoBuffer,packetSize);
 #ifdef OUTPUT_READABLE_QUATERNION
