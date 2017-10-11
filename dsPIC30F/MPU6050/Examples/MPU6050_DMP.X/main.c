@@ -178,8 +178,8 @@ void Init()
 
     printf("Testing device connections...\n");
     printf("MPU6050_ID = 0x%X\n",MPU6050_ID);
-    printf(MPU6050_testConnection() ? "MPU6050 connection successful\r\n" :
-        "MPU6050 connection failed\r\n");
+    printf(MPU6050_testConnection() ? "MPU6050 connection successful\n" :
+        "MPU6050 connection failed\n");
 
     //if (!MPU6050_testConnection())
      //   continue;
@@ -243,8 +243,7 @@ int main(void)
         if ( (mpuInitStatus & 0x10) || (fifocount == 1024) ){
             MPU6050_resetFIFO();
             printf("FIFO overflow!!");
-        } else if ( mpuInitStatus && 0x02 )
-        {
+        } else if ( mpuInitStatus && 0x02 ) {
             while ( fifocount < packetSize ) fifocount = MPU6050_getFIFOCount();
 
             MPU6050_getFIFOBytes(fifoBuffer,packetSize);

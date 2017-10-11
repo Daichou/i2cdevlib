@@ -43,6 +43,7 @@ THE SOFTWARE.
 #include <string.h>
 #include "MPU6050_config.h"
 #include <xc.h>
+#include <stdio.h>
 
 MPU6050_t mpu6050;
 
@@ -3374,17 +3375,19 @@ uint8_t MPU6050_dmpInitialize() {
 
     // disable sleep mode
     //DEBUG_PRINTLN(F("Disabling sleep mode..."));
+    printf("Disabling sleep mode ....\n");
     MPU6050_setSleepEnabled(false);
 
     // get MPU hardware revision
     //DEBUG_PRINTLN(F("Selecting user bank 16..."));
+    printf("Selecting user bank 16...\n");
     MPU6050_setMemoryBank(0x10, true, true);
-    //DEBUG_PRINTLN(F("Selecting memory byte 6..."));
+    printf("Selecting memory byte 6...");
     MPU6050_setMemoryStartAddress(0x06);
-    //DEBUG_PRINTLN(F("Checking hardware revision..."));
+    printf("Checking hardware revision...\n");
     //DEBUG_PRINT(F("Revision @ user[16][6] = "));
     //DEBUG_PRINTLNF(readMemoryByte(), HEX);
-    //DEBUG_PRINTLN(F("Resetting memory bank selection to 0..."));
+    printf("Resetting memory bank selection to 0...\n");
     MPU6050_setMemoryBank(0, false, false);
 
     // check OTP bank valid
@@ -3393,11 +3396,13 @@ uint8_t MPU6050_dmpInitialize() {
     //DEBUG_PRINTLN(getOTPBankValid() ? F("valid!") : F("invalid!"));
 
     // get X/Y/Z gyro offsets
-    //DEBUG_PRINTLN(F("Reading gyro offset TC values..."));
+    printf("Reading gyro offset TC values...\n");
     int8_t xgOffsetTC = MPU6050_getXGyroOffsetTC();
     int8_t ygOffsetTC = MPU6050_getYGyroOffsetTC();
     int8_t zgOffsetTC = MPU6050_getZGyroOffsetTC();
-    //DEBUG_PRINT(F("X gyro offset = "));
+    printf("X gyro offset = %u\n",xgOffsetTC);
+    printf("Y gyro offset = %u\n",ygOffsetTC);
+    printf("Z gyro offset = %u\n",zgOffsetTC);
     //DEBUG_PRINTLN(xgOffsetTC);
     //DEBUG_PRINT(F("Y gyro offset = "));
     //DEBUG_PRINTLN(ygOffsetTC);
@@ -3405,37 +3410,37 @@ uint8_t MPU6050_dmpInitialize() {
     //DEBUG_PRINTLN(zgOffsetTC);
 
     // setup weird slave stuff (?)
-    //DEBUG_PRINTLN(F("Setting slave 0 address to 0x7F..."));
+    printf("Setting slave 0 address to 0x7F...\n");
     MPU6050_setSlaveAddress(0, 0x7F);
-    //DEBUG_PRINTLN(F("Disabling I2C Master mode..."));
+    printf("Disabling I2C Master mode...\n");
     MPU6050_setI2CMasterModeEnabled(false);
-    //DEBUG_PRINTLN(F("Setting slave 0 address to 0x68 (self)..."));
+    printf("Setting slave 0 address to 0x68 (self)...\n");
     MPU6050_setSlaveAddress(0, 0x68);
-    //DEBUG_PRINTLN(F("Resetting I2C Master control..."));
+    printf("Resetting I2C Master control...\n");
     MPU6050_resetI2CMaster();
     __delay_ms(20);
 
     // load DMP code into memory banks
-    //DEBUG_PRINT(F("Writing DMP code to MPU memory banks ("));
+    printf("Writing DMP code to MPU memory banks \n");
     //DEBUG_PRINT(MPU6050_DMP_CODE_SIZE);
     //DEBUG_PRINTLN(F(" bytes)"));
     if (MPU6050_writeProgMemoryBlock(dmpMemory, MPU6050_DMP_CODE_SIZE,0,0,true)) {
         //DEBUG_PRINTLN(F("Success! DMP code written and verified."));
 
         // write DMP configuration
-        //DEBUG_PRINT(F("Writing DMP configuration to MPU memory banks ("));
+        printf("Writing DMP configuration to MPU memory banks \n");
         //DEBUG_PRINT(MPU6050_DMP_CONFIG_SIZE);
         //DEBUG_PRINTLN(F(" bytes in config def)"));
         if (MPU6050_writeProgDMPConfigurationSet(dmpConfig, MPU6050_DMP_CONFIG_SIZE)) {
             //DEBUG_PRINTLN(F("Success! DMP configuration written and verified."));
 
-            //DEBUG_PRINTLN(F("Setting clock source to Z Gyro..."));
+            printf("Setting clock source to Z Gyro...\n");
             MPU6050_setClockSource(MPU6050_CLOCK_PLL_ZGYRO);
 
-            //DEBUG_PRINTLN(F("Setting DMP and FIFO_OFLOW interrupts enabled..."));
+            printf("Setting DMP and FIFO_OFLOW interrupts enabled...\n");
             MPU6050_setIntEnabled(0x12);
 
-            //DEBUG_PRINTLN(F("Setting sample rate to 200Hz..."));
+            printf("Setting sample rate to 200Hz...\n");
             MPU6050_setRate(4); // 1khz / (1 + 4) = 200 Hz
 
             //DEBUG_PRINTLN(F("Setting external frame sync to TEMP_OUT_L[0]..."));
@@ -3447,16 +3452,16 @@ uint8_t MPU6050_dmpInitialize() {
             //DEBUG_PRINTLN(F("Setting gyro sensitivity to +/- 2000 deg/sec..."));
             MPU6050_setFullScaleGyroRange(MPU6050_GYRO_FS_2000);
 
-            //DEBUG_PRINTLN(F("Setting DMP programm start address"));
+            printf("Setting DMP programm start address\n");
             //write start address MSB into register
             MPU6050_setDMPConfig1(0x03);
             //write start address LSB into register
             MPU6050_setDMPConfig2(0x00);
 
-            //DEBUG_PRINTLN(F("Clearing OTP Bank flag..."));
+            printf("Clearing OTP Bank flag...\n");
             MPU6050_setOTPBankValid(false);
 
-            //DEBUG_PRINTLN(F("Setting X/Y/Z gyro offset TCs to previous values..."));
+            printf("Setting X/Y/Z gyro offset TCs to previous values...\n");
             MPU6050_setXGyroOffsetTC(xgOffsetTC);
             MPU6050_setYGyroOffsetTC(ygOffsetTC);
             MPU6050_setZGyroOffsetTC(zgOffsetTC);
@@ -3466,61 +3471,68 @@ uint8_t MPU6050_dmpInitialize() {
             //setYGyroOffset(0);
             //setZGyroOffset(0);
 
-            //DEBUG_PRINTLN(F("Writing final memory update 1/7 (function unknown)..."));
-            uint8_t dmpUpdate[16], j;
+            printf("Writing final memory update 1/7 (function unknown)...\n");
+            uint8_t dmpUpdate[16]={0}, j;
             uint16_t pos = 0;
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
             MPU6050_writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true,true);
 
-            //DEBUG_PRINTLN(F("Writing final memory update 2/7 (function unknown)..."));
+            printf("Writing final memory update 2/7 (function unknown)...\n");
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
             MPU6050_writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true,true);
 
-            //DEBUG_PRINTLN(F("Resetting FIFO..."));
+            printf("Resetting FIFO...\n");
             MPU6050_resetFIFO();
 
-            //DEBUG_PRINTLN(F("Reading FIFO count..."));
+            printf("Reading FIFO count...\n");
             uint16_t fifoCount = MPU6050_getFIFOCount();
             uint8_t fifoBuffer[128];
 
+            printf("Current FIFO count = %u\n",fifoCount);
             //DEBUG_PRINT(F("Current FIFO count="));
             //DEBUG_PRINTLN(fifoCount);
             MPU6050_getFIFOBytes(fifoBuffer, fifoCount);
 
-            //DEBUG_PRINTLN(F("Setting motion detection threshold to 2..."));
+            printf("Setting motion detection threshold to 2...\n");
             MPU6050_setMotionDetectionThreshold(2);
 
-            //DEBUG_PRINTLN(F("Setting zero-motion detection threshold to 156..."));
+            printf("Setting zero-motion detection threshold to 156...\n");
             MPU6050_setZeroMotionDetectionThreshold(156);
 
-            //DEBUG_PRINTLN(F("Setting motion detection duration to 80..."));
+            printf("Setting motion detection duration to 80...\n");
             MPU6050_setMotionDetectionDuration(80);
 
-            //DEBUG_PRINTLN(F("Setting zero-motion detection duration to 0..."));
+            printf("Setting zero-motion detection duration to 0...\n");
             MPU6050_setZeroMotionDetectionDuration(0);
 
-            //DEBUG_PRINTLN(F("Resetting FIFO..."));
+            printf("Resetting FIFO...\n");
             MPU6050_resetFIFO();
 
-            //DEBUG_PRINTLN(F("Enabling FIFO..."));
+            printf("Enabling FIFO...\n");
             MPU6050_setFIFOEnabled(true);
 
-            //DEBUG_PRINTLN(F("Enabling DMP..."));
+            printf("Enabling DMP...");
             MPU6050_setDMPEnabled(true);
 
-            //DEBUG_PRINTLN(F("Resetting DMP..."));
+            printf("Resetting DMP..\n.");
             MPU6050_resetDMP();
 
-            //DEBUG_PRINTLN(F("Writing final memory update 3/7 (function unknown)..."));
+            printf("Writing final memory update 3/7 (function unknown)...\n");
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
             MPU6050_writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true,true);
 
-            //DEBUG_PRINTLN(F("Writing final memory update 4/7 (function unknown)..."));
+            printf("Writing final memory update 4/7 (function unknown)...\n");
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
             MPU6050_writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true,true);
 
-            //DEBUG_PRINTLN(F("Writing final memory update 5/7 (function unknown)..."));
+            printf("Writing final memory update 5/7 (function unknown)...\n");
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
             MPU6050_writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true,true);
 
-            //DEBUG_PRINTLN(F("Waiting for FIFO count > 2..."));
+            printf("Waiting for FIFO count > 2...\n");
             while ((fifoCount = MPU6050_getFIFOCount()) < 3);
 
+            printf("Current FIFO count = %u\n",fifoCount);
             //DEBUG_PRINT(F("Current FIFO count="));
             //DEBUG_PRINTLN(fifoCount);
             //DEBUG_PRINTLN(F("Reading FIFO data..."));
@@ -3528,15 +3540,16 @@ uint8_t MPU6050_dmpInitialize() {
 
             //DEBUG_PRINTLN(F("Reading interrupt status..."));
 
-            //DEBUG_PRINT(F("Current interrupt status="));
-            //DEBUG_PRINTLNF(getIntStatus(), HEX);
+            printf("Current interrupt status=%x\n",MPU6050_getIntStatus());
 
-            //DEBUG_PRINTLN(F("Reading final memory update 6/7 (function unknown)..."));
+            printf("Reading final memory update 6/7 (function unknown)...\n");
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
             MPU6050_readMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1]);
 
-            //DEBUG_PRINTLN(F("Waiting for FIFO count > 2..."));
+            printf("Waiting for FIFO count > 2...\n");
             while ((fifoCount = MPU6050_getFIFOCount()) < 3);
 
+            printf("Current FIFO count = %u\n",fifoCount);
             //DEBUG_PRINT(F("Current FIFO count="));
             //DEBUG_PRINTLN(fifoCount);
 
@@ -3547,13 +3560,15 @@ uint8_t MPU6050_dmpInitialize() {
 
             //DEBUG_PRINT(F("Current interrupt status="));
             //DEBUG_PRINTLNF(getIntStatus(), HEX);
+            printf("Current interrupt status=%x\n",MPU6050_getIntStatus());
 
-            //DEBUG_PRINTLN(F("Writing final memory update 7/7 (function unknown)..."));
+            printf("Writing final memory update 7/7 (function unknown)...\n");
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
             MPU6050_writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true,true);
 
-            //DEBUG_PRINTLN(F("DMP is good to go! Finally."));
+            printf("DMP is good to go! Finally.\n");
 
-            //DEBUG_PRINTLN(F("Disabling DMP (you turn it on later)..."));
+            printf("Disabling DMP (you turn it on later)...\n");
             MPU6050_setDMPEnabled(false);
 
             //DEBUG_PRINTLN(F("Setting up internal 42-byte (default) DMP packet buffer..."));
@@ -3566,11 +3581,11 @@ uint8_t MPU6050_dmpInitialize() {
             MPU6050_resetFIFO();
             MPU6050_getIntStatus();
         } else {
-            //DEBUG_PRINTLN(F("ERROR! DMP configuration verification failed."));
+            printf("ERROR! DMP configuration verification failed.\n");
             return 2; // configuration block loading failed
         }
     } else {
-        //DEBUG_PRINTLN(F("ERROR! DMP code verification failed."));
+        printf("ERROR! DMP code verification failed.\n");
         return 1; // main binary block loading failed
     }
     return 0; // success
