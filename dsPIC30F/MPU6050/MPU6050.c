@@ -2990,7 +2990,7 @@ bool MPU6050_writeMemoryBlock(const uint8_t *data, uint16_t dataSize, uint8_t ba
         
         if (useProgMem) {
             // write the chunk of data as specified
-            for (j = 0; j < chunkSize; j++) progBuffer[j] = *(data + i + j); //pgm_read_byte;
+            for (j = 0; j < chunkSize; j++) progBuffer[j] = pgm_read_byte(data+i+j); //pgm_read_byte;
         } else {
             // write the chunk of data as specified
             progBuffer = (uint8_t *)data + i;
@@ -3059,9 +3059,9 @@ bool MPU6050_writeDMPConfigurationSet(const uint8_t *data, uint16_t dataSize, bo
     uint8_t bank, offset, length;
     for (i = 0; i < dataSize;) {
         if (useProgMem) {
-            bank = *(data + i++);       //pgm_read_byte
-            offset = *(data + i++);     //pgm_read_byte
-            length = *(data + i++);     //pgm_read_byte
+            bank = pgm_read_byte(data + i++);       //pgm_read_byte
+            offset = pgm_read_byte(data + i++);     //pgm_read_byte
+            length = pgm_read_byte(data + i++);     //pgm_read_byte
         } else {
             bank = data[i++];
             offset = data[i++];
@@ -3079,7 +3079,7 @@ bool MPU6050_writeDMPConfigurationSet(const uint8_t *data, uint16_t dataSize, bo
             //Serial.println(length);
             if (useProgMem) {
                 if (sizeof(progBuffer) < length) progBuffer = (uint8_t *)realloc(progBuffer, length);
-                for (j = 0; j < length; j++) progBuffer[j] = *(data + i + j);       //pgm_read_byte
+                for (j = 0; j < length; j++) progBuffer[j] = pgm_read_byte(data + i + j);       //pgm_read_byte
             } else {
                 progBuffer = (uint8_t *)data + i;
             }
@@ -3092,7 +3092,7 @@ bool MPU6050_writeDMPConfigurationSet(const uint8_t *data, uint16_t dataSize, bo
             // behavior only, and exactly why (or even whether) it has to be here
             // is anybody's guess for now.
             if (useProgMem) {
-                special = *(data + i++);            //pgm_read_byte
+                special = pgm_read_byte(data + i++);            //pgm_read_byte
             } else {
                 special = data[i++];
             }
@@ -3474,11 +3474,11 @@ uint8_t MPU6050_dmpInitialize() {
             printf("Writing final memory update 1/7 (function unknown)...\n");
             uint8_t dmpUpdate[16]={0}, j;
             uint16_t pos = 0;
-            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
             MPU6050_writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true,true);
 
             printf("Writing final memory update 2/7 (function unknown)...\n");
-            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
             MPU6050_writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true,true);
 
             printf("Resetting FIFO...\n");
@@ -3518,11 +3518,11 @@ uint8_t MPU6050_dmpInitialize() {
             MPU6050_resetDMP();
 
             printf("Writing final memory update 3/7 (function unknown)...\n");
-            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
             MPU6050_writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true,true);
 
             printf("Writing final memory update 4/7 (function unknown)...\n");
-            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
             MPU6050_writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true,true);
 
             printf("Writing final memory update 5/7 (function unknown)...\n");
@@ -3543,7 +3543,7 @@ uint8_t MPU6050_dmpInitialize() {
             printf("Current interrupt status=%x\n",MPU6050_getIntStatus());
 
             printf("Reading final memory update 6/7 (function unknown)...\n");
-            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
             MPU6050_readMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1]);
 
             printf("Waiting for FIFO count > 2...\n");
@@ -3563,7 +3563,7 @@ uint8_t MPU6050_dmpInitialize() {
             printf("Current interrupt status=%x\n",MPU6050_getIntStatus());
 
             printf("Writing final memory update 7/7 (function unknown)...\n");
-            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = dmpUpdates[pos];
+            for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
             MPU6050_writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1],true,true);
 
             printf("DMP is good to go! Finally.\n");

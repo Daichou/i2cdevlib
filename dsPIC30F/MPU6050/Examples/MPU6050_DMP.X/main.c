@@ -6,7 +6,6 @@
  */
 
 
-
 // DSPIC30F4013 Configuration Bit Settings
 
 // 'C' source line config statements
@@ -21,7 +20,7 @@
 #pragma config WDT = WDT_OFF            // Watchdog Timer (Disabled)
 
 // FBORPOR
-#pragma config FPWRT = PWRT_OFF         // POR Timer Value (Timer Disabled)
+#pragma config FPWRT = PWRT_16          // POR Timer Value (16ms)
 #pragma config BODENV = BORV20          // Brown Out Voltage (Reserved)
 #pragma config BOREN = PBOR_OFF         // PBOR Enable (Disabled)
 #pragma config MCLRE = MCLR_EN          // Master Clear Enable (Enabled)
@@ -35,6 +34,13 @@
 
 // #pragma config statements should precede project file includes.
 // Use project enums instead of #define for ON and OFF.
+
+#include <xc.h>
+
+
+
+
+
 
 #define true 1
 #define false 0
@@ -51,7 +57,7 @@
 //#define OUTPUT_READABLE_WORLDACCEL
 //#define OUTPUT_TEAPOT
 
-#include <xc.h>
+
 #include<uart.h>
 #include<stdio.h>
 #include<i2c.h>
@@ -62,8 +68,8 @@
 #include"../../../I2Cdev/I2Cdev.h"
 //#include"../../MPU6050_6Axis_MotionApps20.h"
 /* Received data is stored in array Buf  */
-char Buf[80];
-char* Receivedddata = Buf;
+
+//char* Receivedddata = Buf;
 int16_t ax, ay, az, gx, gy, gz;
 volatile unsigned int mpuInterrupt = false;
 uint8_t devStatus;
@@ -87,10 +93,10 @@ uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\
 
 
 /* This is UART1 transmit ISR */
-void _ISR _U2TXInterrupt(void)
-{  
-   IFS1bits.U2TXIF = 0;
-}
+//void _ISR _U2TXInterrupt(void)
+//{  
+//   IFS1bits.U2TXIF = 0;
+//}
 
 void _ISR _INT0Interrupt(void)
 {  
@@ -142,12 +148,12 @@ void Init()
     unsigned int U2STAvalue;
     CloseI2C();
     /* Turn off UART1module */
-    CloseUART2();
+    //CloseUART2();
     /* Configure uart1 transmit interrupt */
-    ConfigIntUART2(  UART_TX_INT_DIS & UART_TX_INT_PR2);
+    //ConfigIntUART2(  UART_TX_INT_DIS & UART_TX_INT_PR2);
     /* Configure UART1 module to transmit 8 bit data with one stopbit. Also Enable loopback mode  */
-    baudvalue = 15;//129;  //9600
-    U2MODEvalue = UART_EN & UART_IDLE_CON &
+    //baudvalue = 15;//129;  //9600
+    /*U2MODEvalue = UART_EN & UART_IDLE_CON &
                   UART_DIS_WAKE & UART_DIS_LOOPBACK  &
                   UART_EN_ABAUD & UART_NO_PAR_8BIT  &
                   UART_1STOPBIT;
@@ -156,6 +162,7 @@ void Init()
                   UART_TX_ENABLE & UART_INT_RX_3_4_FUL &
                   UART_ADR_DETECT_DIS &
                   UART_RX_OVERRUN_CLEAR;
+    */
     unsigned int I2C_config1,I2C_config2;
     I2C_config1 = (I2C_ON & I2C_IDLE_CON & I2C_CLK_HLD &
              I2C_IPMI_DIS & I2C_7BIT_ADD &
@@ -167,11 +174,11 @@ void Init()
     I2C_config2 = 381;
     ConfigIntI2C(MI2C_INT_OFF & SI2C_INT_OFF);
     OpenI2C(I2C_config1,I2C_config2);
-    OpenUART2(U2MODEvalue, U2STAvalue, baudvalue);
+    //OpenUART2(U2MODEvalue, U2STAvalue, baudvalue);
     ConfigINT0(RISING_EDGE_INT & EXT_INT_ENABLE & GLOBAL_INT_ENABLE & EXT_INT_PRI_1);
 
     MPU6050(MPU6050_ADDRESS_AD0_LOW);
-    printf(Buf,"Initialize MPU6050\n\0");
+    printf("Initialize MPU6050\n");
     MPU6050_initialize();
 
     unsigned char MPU6050_ID = MPU6050_getDeviceID();
